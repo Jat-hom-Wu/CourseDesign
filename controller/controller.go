@@ -4,11 +4,21 @@ import(
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"Global/models"
+	"time"
+	"Global/jwt_service"
+	"log"
+	"github.com/dgrijalva/jwt-go"
 )
 
 //show data page
 func HandleHome(c *gin.Context){
-	c.HTML(http.StatusOK, "home.html",nil)
+	_,err := c.Cookie("token")
+	if err != nil{
+		log.Println("not receive token")
+		c.Redirect(http.StatusFound, "/course/login")
+		return
+	}
+	c.HTML(http.StatusOK,"home.html",nil)
 }
 
 //get data interface
@@ -48,7 +58,24 @@ func HandleLoginCGI(c *gin.Context){
 		return
 	}else{
 		if user == result.UserName && password == result.Password{
-			c.HTML(http.StatusOK, "home.html", nil)
+			//token
+			nowTime := time.Now()
+			expireTime := nowTime.Add(600 * time.Second)	//token的过期时间，header中以设置过期时间，因此此处没意义
+			issuer := "frank"
+			cla := jwt_service.Claims{
+				Password: password,
+				Username: user,
+				StandardClaims: jwt.StandardClaims{
+					ExpiresAt: expireTime.Unix(),
+					Issuer:    issuer,
+				},
+			}
+			token,err := jwt_service.GenerateToken(cla)
+			if err != nil{
+				log.Println("generate token falied:",err)
+			}
+			c.SetCookie("token", token, 600, "/", "159.75.2.47", false, false)
+			c.Redirect(http.StatusFound, "/course/home")
 		}else{
 			c.HTML(http.StatusOK, "logError.html", nil)
 		}
