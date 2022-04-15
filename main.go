@@ -2,9 +2,11 @@ package main
 
 import(
 	"Global/router"
+	"Global/dao"
 )
 
 func main(){
+	dao.MySQLInit()
 	r := router.RountersInit()
-	r.Run("127.0.0.1:9527")
+	r.Run(":9527")
 }
