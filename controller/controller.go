@@ -3,7 +3,7 @@ package controller
 import(
 	"github.com/gin-gonic/gin"
 	"net/http"
-	// "fmt"
+	"Global/models"
 )
 
 //show data page
@@ -13,7 +13,8 @@ func HandleHome(c *gin.Context){
 
 //get data interface
 func HandleData(c *gin.Context){
-	c.JSON(http.StatusOK,"handle data api")
+	result,_ := models.HumidifierGetData()
+	c.JSON(200, *result)
 }
 
 //inedex
@@ -41,13 +42,33 @@ func HandleRegisterFail(c *gin.Context){
 func HandleLoginCGI(c *gin.Context){
 	user := c.PostForm("user")
 	password := c.PostForm("password")
-	re := user + password
-	c.JSON(200,re)
+	result,err := models.UserFindData(user)
+	if err != nil{
+		c.JSON(505,"server error")
+		return
+	}else{
+		if user == result.UserName && password == result.Password{
+			c.HTML(http.StatusOK, "home.html", nil)
+		}else{
+			c.HTML(http.StatusOK, "logError.html", nil)
+		}
+	}
+	
 }
 
 func HandleRegisterCGI(c *gin.Context){
 	user := c.PostForm("user")
 	password := c.PostForm("password")
-	re := user + password
-	c.JSON(200,re)
+	result,err := models.UserFindData(user)
+	if err != nil{
+		c.JSON(505,"server error")
+		return
+	}else{
+		if result.UserName == ""{
+			models.UserCreateData(user,password)
+			c.HTML(http.StatusOK, "log.html", nil)
+		}else{
+			c.HTML(http.StatusOK, "registerError.html", nil)
+		}
+	}
 }
