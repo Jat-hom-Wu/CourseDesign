@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>课程设计</title>
+    <!-- <link rel="stylesheet" href="CourseDesign.css"> -->
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        .data ul li {
+            float: left;
+            height: 2em;
+            width: 270px;
+            font-size: 16px;
+            line-height: 2em;
+            list-style: none;
+            /* background-color: pink; */
+            margin-left: 30px;
+            margin-bottom: 10px;
+        }
+
+        body {
+            border-bottom-color: white;
+        }
+
+        .documentname {
+            height: 80px;
+            text-align: center;
+            line-height: 80px;
+            background-color: #222;
+            color: #fff;
+        }
+
+        .cardata {
+            width: 1230px;
+            height: 280px;
+            background-color: #f4f4f4;
+            margin: 10px auto;
+        }
+
+        .line {
+            line-height: 3em;
+            text-indent: 2em;
+            border-bottom-color: black;
+        }
+
+        /* .data {
+    padding: 1em 2em;
+} */
+
+        .data ul li input {
+            float: right;
+            height: 2em;
+            width: 150px;
+            font-size: 16px;
+            border: none;
+            background: rgba(225, 225, 225, .6);
+            border-radius: 4px;
+        }
+
+        .data .get {
+            width: 100px;
+            height: 32px;
+            margin-left: 30px;
+        }
+
+        .data .get input {
+            width: 100px;
+            height: 32px;
+            font-size: 16px;
+            font-weight: 400;
+            line-height: 16px;
+            text-align: center;
+            border-radius: 4px;
+        }
+
+        .changedata {
+            width: 1230px;
+            height: 160px;
+            background-color: #f4f4f4;
+            margin: 10px auto;
+        }
+
+        .control {
+            width: 1230px;
+            height: 120px;
+            background-color: #f4f4f4;
+            margin: 10px auto;
+        }
+
+        .change ul li {
+            float: left;
+            list-style: none;
+            /* float: left;
+    height: 2em;
+    width: 270px;
+    font-size: 16px;
+    line-height: 2em;
+    list-style: none;
+    /* background-color: pink; */
+            /* margin-left: 30px;
+    margin-bottom: 10px; */
+            height: 32px;
+            width: 270px;
+            margin-left: 30px;
+        }
+
+        .changedata .change ul input {
+            height: 2em;
+            width: 150px;
+            font-size: 16px;
+            border: none;
+            background-color: white;
+            border-radius: 4px;
+        }
+
+        .change {
+            height: 32px;
+            width: 1230px;
+            /* background-color: pink; */
+        }
+
+        .button {
+            height: 32px;
+            width: 1200px;
+            margin-top: 20px;
+            /* background-color: orange; */
+        }
+
+        .button ul li {
+            list-style: none;
+            float: left;
+            height: 32px;
+            width: 270px;
+            margin-left: 30px;
+            /* background-color: palegreen; */
+        }
+
+        .button input {
+            width: 100px;
+            height: 32px;
+            font-size: 16px;
+            font-weight: 400;
+            line-height: 16px;
+            text-align: center;
+            border-radius: 4px;
+        }
+
+        .Scatterplot {
+            width: 1230px;
+            height: 580px;
+            background-color: #f4f4f4;
+            margin: 10px auto;
+        }
+
+        .plot {
+            width: 800px;
+            height: 500px;
+            margin: auto;
+            border-radius: 10px;
+            background-color: white;
+        }
+
+        .Scatterplot1 {
+            width: 1230px;
+            height: 1100px;
+            background-color: #f4f4f4;
+            margin: 10px auto;
+        }
+
+        .plot1 {
+            width: 800px;
+            height: 500px;
+            margin: auto;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            background-color: white;
+        }
+
+        .plot2 {
+            width: 800px;
+            height: 500px;
+            margin: auto;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            background-color: white;
+        }
+    </style>
+</head>
+
+<body>
+    <div id=top>
+        <div class="documentname">
+            <h1>课程设计</h1>
+        </div>
+        <div class="cardata">
+            <div class="line">
+                <h4>小车数据</h4>
+            </div>
+            <div class="data">
+                <ul>
+                    <li>编号:
+                        <input type="text" disabled="disabled" v-model="cardata.number">
+                    </li>
+                    <li>左编码器值:
+                        <input type="text" disabled="disabled" v-model="cardata.encoder_left">
+                    </li>
+                    <li>右编码器值:
+                        <input type="text" disabled="disabled" v-model="cardata.encoder_right">
+                    </li>
+                    <li>A_X:
+                        <input type="text" disabled="disabled" v-model="cardata.A_X">
+                    </li>
+                    <li>A_Y:
+                        <input type="text" disabled="disabled" v-model="cardata.A_Y">
+                    </li>
+                    <li>A_Z:
+                        <input type="text" disabled="disabled" v-model="cardata.A_Z">
+                    </li>
+                    <li>G_X:
+                        <input type="text" disabled="disabled" v-model="cardata.G_X">
+                    </li>
+                    <li>G_Y:
+                        <input type="text" disabled="disabled" v-model="cardata.G_Y">
+                    </li>
+                    <li>G_Z:
+                        <input type="text" disabled="disabled" v-model="cardata.G_Z">
+                    </li>
+                    <li>M_X:
+                        <input type="text" disabled="disabled" v-model="cardata.M_X">
+                    </li>
+                    <li>M_Y:
+                        <input type="text" disabled="disabled" v-model="cardata.M_Y">
+                    </li>
+                    <li>M_Z:
+                        <input type="text" disabled="disabled" v-model="cardata.M_Z">
+                    </li>
+                    <li>左电感值:
+                        <input type="text" disabled="disabled" v-model="cardata.inductance_left">
+                    </li>
+                    <li>中电感值:
+                        <input type="text" disabled="disabled" v-model="cardata.inductance_right">
+                    </li>
+                    <li>右电感值:
+                        <input type="text" disabled="disabled" v-model="cardata.inductance_mid">
+                    </li>
+                    <li>偏离中心值:
+                        <input type="text" disabled="disabled" v-model="cardata.fe">
+                    </li>
+                    <li>左电机控制值:
+                        <input type="text" disabled="disabled" v-model="cardata.motor_left">
+                    </li>
+                    <li>右电机控制值:
+                        <input type="text" disabled="disabled" v-model="cardata.motor_right">
+                    </li>
+                    <li>舵机控制值:
+                        <input type="text" disabled="disabled" v-model="cardata.steer">
+                    </li>
+                </ul>
+                <!-- <div class="get">
+                    <input type="button" value="获取数据" @click="start">
+                    <input type="button" value="停止显示" @click="stop">
+                </div> -->
+            </div>
+        </div>
+        <div class="control">
+            <div class="line">
+                <h4>小车控制台</h4>
+            </div>
+            <div class=" button">
+                <ul>
+                    <li>
+                        <input type="button" value="启动" @click="start">
+                    </li>
+                    <li>
+                        <input type="button" value="停止" @click="stop">
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+
+        <div class="changedata">
+            <div class="line">
+                <h4>调试PID值</h4>
+            </div>
+
+            <div class="change">
+                <ul>
+                    <li>P值:
+                        <input type="text" v-model="PID.P">
+                    </li>
+                    <li>I值:
+                        <input type="text" v-model="PID.I">
+                    </li>
+                    <li>D值:
+                        <input type=" text" v-model="PID.D">
+                    </li>
+                </ul>
+            </div>
+            <div class=" button">
+                <ul>
+                    <li>
+                        <input type="button" value="调试" @click="change">
+                    </li>
+                    <li>
+                        <input type="button" value="清屏" @click="clear">
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="Scatterplot">
+            <div class="line">
+                <h4>实时轨迹</h4>
+                <div class="plot"></div>
+            </div>
+        </div>
+
+        <div class="Scatterplot1">
+            <div class="line">
+                <h4>数据相关性分析</h4>
+                <div class="plot1"></div>
+                <div class="plot2"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.bootcss.com/echarts/4.2.1-rc1/echarts.min.js"></script>
+    <script>
+        var app = new Vue({
+            el: "#top",
+            data: {
+                cardata: [{
+                    number: '',
+                    encoder_left: '',
+                    encoder_right: '',
+                    A_X: '',
+                    A_Y: '',
+                    A_Z: '',
+                    G_X: '',
+                    G_Y: '',
+                    G_Z: '',
+                    M_X: '',
+                    M_Y: '',
+                    M_Z: '',
+                    inductance_left: '',
+                    inductance_right: '',
+                    inductance_mid: '',
+                    fe: '',
+                    motor_left: '',
+                    motor_right: '',
+                    steer: '',
+                }],
+
+                PID: [{
+                    P: '',
+                    I: '',
+                    D: '',
+                }],
+                time: '',
+
+                plottime: '',
+
+                plottime1: '',
+
+                plottime2: '',
+
+                plotnum: 0,
+
+                plotnum1: 0,
+
+                plotnum2: 0,
+
+                testdata: [],
+
+                plotdata: [],
+
+                plotdata1: [],
+
+                plotdata2: []
+            },
+
+            methods: {
+
+                getdata: function () {
+                    var that = this;
+                    axios.get("http://159.75.2.47:8889/data").then
+                        (function (response) {
+                            that.cardata = response.data;
+
+                        }, function (err) {
+                            // alert('小车数据获取失败');
+                        })
+                },
+
+                start: function () {
+
+                    this.PID.P = 0;
+                    this.PID.I = 0;
+                    this.PID.D = 1;
+
+                    axios.get("http://159.75.2.47:8889/pid/p=" + this.PID.P + "/i=" + this.PID.I + "/d=" + this.PID.D).then
+                        (function (response) {
+
+                        }, function (err) {
+                            alert('启动失败');
+                        })
+                },
+
+                stop: function () {
+
+                    this.PID.P = 0;
+                    this.PID.I = 1;
+                    this.PID.D = 0;
+                    axios.get("http://159.75.2.47:8889/pid/p=" + this.PID.P + "/i=" + this.PID.I + "/d=" + this.PID.D).then
+                        (function (response) {
+
+                        }, function (err) {
+                            alert('停止失败');
+                        })
+                },
+
+                change: function () {
+
+                    axios.get("http://159.75.2.47:8889/pid/p=" + this.PID.P + "/i=" + this.PID.I + "/d=" + this.PID.D).then
+                        (function (response) {
+                            alert('PID调试成功');
+                        }, function (err) {
+                            alert('PID调试失败');
+                        })
+                },
+                clear: function () {
+                    this.PID = ['', '', ''];
+                    this.cardata = [{
+                        number: '',
+                        encoder_left: '',
+                        encoder_right: '',
+                        A_X: '',
+                        A_Y: '',
+                        A_Z: '',
+                        G_X: '',
+                        G_Y: '',
+                        G_Z: '',
+                        M_X: '',
+                        M_Y: '',
+                        M_Z: '',
+                        inductance_left: '',
+                        inductance_right: '',
+                        inductance_mid: '',
+                        fe: '',
+                        motor_left: '',
+                        motor_right: '',
+                        steer: '',
+                    }];
+
+                    this.plotdata = [];
+                    this.plotdata1 = [];
+                    this.plotdata2 = [];
+
+
+
+                    this.plotnum = 0;
+                    this.plotnum1 = 0;
+                    this.plotnum2 = 0;
+
+
+                },
+
+                myEcharts: function () {
+                    var that = this;
+
+                    var mycharts = echarts.init(document.querySelector('.plot'));
+                    var option = {
+                        title: {
+                            text: '小车实时轨迹图',
+                            left: "center",
+
+
+                        },
+
+                        tooltip: {
+                            trigger: 'axis'
+                        },
+                        xAxis: {
+                            type: 'value',
+                            name: 'x轴',
+                            //  nameLocation: 'center',
+                            verticalAlign: 'bottom',
+                            // min: 0,
+                            // max: 800
+                        },
+                        yAxis: {
+                            type: 'value',
+                            name: 'y轴',
+                            //  nameLocation: 'center',
+                            verticalAlign: 'bottom',
+                            // min: 0,
+                            // max: 600
+                        },
+                        series: [
+                            {
+                                symbolSize: 10,
+                                data: that.plotdata,
+                                type: 'line',
+                                smooth: true
+                            }
+                        ]
+                    };
+
+                    mycharts.setOption(option);
+                },
+
+                drawplot: function () {
+                    var that = this;
+
+                    axios.get("http://159.75.2.47:8889/data6").then
+                        (function (response) {
+
+                            that.plotdata[that.plotnum] = response.data;
+                            // that.testdata = response.data;
+
+
+                            that.myEcharts();
+                            that.plotnum++;
+
+
+                        }, function (err) {
+                            // alert('小车轨迹数据获取失败');
+                        })
+                },
+
+                // draw: function () {
+                //     var that = this;
+
+                //     that.plotdata[that.plotnum] = that.testdata[that.plotnum];
+
+                //     that.myEcharts();
+                //     that.plotnum++;
+                //     //console.log(that.drawplot);
+                //     // console.log(that.testdata[that.plotnum]);
+                //     // console.log(that.plotnum)
+
+                // },
+
+
+                myEcharts1: function () {
+                    var that = this;
+
+                    var mycharts1 = echarts.init(document.querySelector('.plot1'));
+                    var option1 = {
+                        title: {
+                            text: '电感差值与舵机打角关系图',
+                            left: "center",
+                        },
+                        tooltip: {
+                            trigger: 'axis'
+                        },
+                        xAxis: {
+                            type: 'value',
+                            name: '电感差值',
+                            //   nameLocation: 'center',
+                            verticalAlign: 'bottom'
+                        },
+                        yAxis: {
+                            type: 'value',
+                            name: '舵机打角值',
+                            //  nameLocation: 'center',
+                            verticalAlign: 'bottom'
+                        },
+                        series: [
+                            {
+                                symbolSize: 10,
+                                data: that.plotdata1,
+                                type: 'scatter'
+                            }
+                        ]
+                    };
+
+                    mycharts1.setOption(option1);
+                },
+
+                drawplot1: function () {
+                    var that = this;
+
+                    axios.get("http://159.75.2.47:8889/data4").then
+                        (function (response) {
+
+                            // while (that.plotnum1 < response.data.length) {
+                            //     that.plotdata1[that.plotnum1] = response.data[that.plotnum1];
+                            //     that.myEcharts1();
+                            //     that.plotnum1++;
+
+                            that.plotdata1[that.plotnum1] = response.data;
+                            that.myEcharts1();
+                            that.plotnum1++;
+
+                        }, function (err) {
+                            // alert('数据分析一获取失败');
+                        })
+                },
+                myEcharts2: function () {
+                    var that = this;
+
+                    var mycharts2 = echarts.init(document.querySelector('.plot2'));
+                    var option2 = {
+                        title: {
+                            text: '电感差值与左右电机差值关系图',
+                            left: "center",
+                        },
+                        tooltip: {
+                            trigger: 'axis'
+                        },
+                        xAxis: {
+                            type: 'value',
+                            name: '电感差值',
+                            //  nameLocation: 'center',
+                            verticalAlign: 'bottom'
+                        },
+                        yAxis: {
+                            type: 'value',
+                            name: '左右电机差值的绝对值',
+                            //  nameLocation: 'center',
+                            verticalAlign: 'bottom'
+                        },
+                        series: [
+                            {
+                                symbolSize: 10,
+                                data: that.plotdata2,
+                                type: 'scatter'
+                            }
+                        ]
+                    };
+
+                    mycharts2.setOption(option2);
+                },
+
+                drawplot2: function () {
+                    var that = this;
+
+                    axios.get("http://159.75.2.47:8889/data5").then
+                        (function (response) {
+
+                            // while (that.plotnum2 < response.data.length) {
+                            //     that.plotdata2[that.plotnum2] = response.data[that.plotnum2];
+                            //     that.myEcharts2();
+                            //     that.plotnum2++;
+                            that.plotdata2[that.plotnum2] = response.data;
+                            that.myEcharts2();
+                            that.plotnum2++;
+
+
+                        }, function (err) {
+                            // alert('数据分析二获取失败');
+                        })
+                }
+
+            },
+
+            mounted() {
+                time = setInterval(this.getdata, 500);
+                plottime = setInterval(this.drawplot, 500);
+                // plottime = setInterval(this.drawplot, 1);
+                // plottime1 = setInterval(this.drawplot1, 500);
+                // plottime2 = setInterval(this.drawplot2, 500);
+                //  this.drawplot();
+                // this.drawplot1();
+                // this.drawplot2();
+                plottime1 = setInterval(this.drawplot1, 500);
+                plottime2 = setInterval(this.drawplot2, 500);
+            },
+            beforeDestroy() {
+                clearInterval(this.timer);
+                clearInterval(this.plottime);
+                // clearInterval(this.plottime1);
+                // clearInterval(this.plottime2);
+            }
+        })
+
+
+
+    </script>
+
+
+
+
+
+
+</body>
+
+</html>
