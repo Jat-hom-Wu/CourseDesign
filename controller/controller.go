@@ -12,12 +12,6 @@ import(
 
 //show data page
 func HandleHome(c *gin.Context){
-	_,err := c.Cookie("token")
-	if err != nil{
-		log.Println("not receive token")
-		c.Redirect(http.StatusFound, "/course/login")
-		return
-	}
 	c.HTML(http.StatusOK,"home.html",nil)
 }
 
@@ -60,9 +54,10 @@ func HandleLoginCGI(c *gin.Context){
 		if user == result.UserName && password == result.Password{
 			//token
 			nowTime := time.Now()
-			expireTime := nowTime.Add(600 * time.Second)	//token的过期时间，header中以设置过期时间，因此此处没意义
+			expireTime := nowTime.Add(10 * time.Second)	//token的过期时间，header中以设置过期时间，因此此处没意义
 			issuer := "frank"
 			cla := jwt_service.Claims{
+				//token中最好不要放敏感信息
 				Password: password,
 				Username: user,
 				StandardClaims: jwt.StandardClaims{
@@ -74,7 +69,7 @@ func HandleLoginCGI(c *gin.Context){
 			if err != nil{
 				log.Println("generate token falied:",err)
 			}
-			c.SetCookie("token", token, 600, "/", "159.75.2.47", false, false)
+			c.SetCookie("token", token, 10, "/", "159.75.2.47", false, false)
 			c.Redirect(http.StatusFound, "/course/home")
 		}else{
 			c.HTML(http.StatusOK, "logError.html", nil)
@@ -96,6 +91,23 @@ func HandleRegisterCGI(c *gin.Context){
 			c.HTML(http.StatusOK, "log.html", nil)
 		}else{
 			c.HTML(http.StatusOK, "registerError.html", nil)
+		}
+	}
+}
+
+func JwtMiddleWare(c *gin.Context){
+	token,err := c.Cookie("token")
+	if err != nil{
+		log.Println("not receive token")
+		c.Redirect(http.StatusFound, "/course/login")
+		c.Abort()
+		return
+	}else{
+		_,err = jwt_service.ParseToken(token)
+		if err != nil{
+			log.Println("token parse failed")
+			c.Redirect(http.StatusFound, "/course/login")
+			c.Abort()
 		}
 	}
 }

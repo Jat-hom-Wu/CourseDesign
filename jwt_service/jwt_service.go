@@ -28,12 +28,10 @@ func ParseToken(token string) (*Claims, error) {
 	if err != nil {
 	  return nil, err
 	}
-  
 	if tokenClaims != nil {
 	  if claims, ok := tokenClaims.Claims.(*Claims); ok && tokenClaims.Valid {
 		return claims, nil
 	  }
 	}
-  
 	return nil, err
   }
