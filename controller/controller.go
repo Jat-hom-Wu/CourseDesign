@@ -54,7 +54,7 @@ func HandleLoginCGI(c *gin.Context){
 		if user == result.UserName && password == result.Password{
 			//token
 			nowTime := time.Now()
-			expireTime := nowTime.Add(10 * time.Second)	//token的过期时间，header中以设置过期时间，因此此处没意义
+			expireTime := nowTime.Add(600 * time.Second)	//token的过期时间，header中以设置过期时间，因此此处没意义
 			issuer := "frank"
 			cla := jwt_service.Claims{
 				//token中最好不要放敏感信息
@@ -69,7 +69,7 @@ func HandleLoginCGI(c *gin.Context){
 			if err != nil{
 				log.Println("generate token falied:",err)
 			}
-			c.SetCookie("token", token, 10, "/", "159.75.2.47", false, false)
+			c.SetCookie("token", token, 600, "/", "159.75.2.47", false, false)
 			c.Redirect(http.StatusFound, "/course/home")
 		}else{
 			c.HTML(http.StatusOK, "logError.html", nil)

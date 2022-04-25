@@ -9,6 +9,7 @@ import (
 func RountersInit() *gin.Engine {
 	r := gin.Default()
 	r.LoadHTMLGlob("templates/*")
+	r.Static("/picture","./picture")
 	// r.GET("/pid", HandlePid)	//
 	r.GET("/data", controller.HandleData) //get all data
 

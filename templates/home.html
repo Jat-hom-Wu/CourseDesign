@@ -197,7 +197,7 @@
 <body>
     <div id=top>
         <div class="documentname">
-            <h1>课程设计</h1>
+            <h1>Graduation Project</h1>
         </div>
         <div class="cardata">
             <div class="line">
@@ -205,128 +205,35 @@
             </div>
             <div class="data">
                 <ul>
-                    <li>编号:
-                        <input type="text" disabled="disabled" v-model="cardata.number">
+                    <li>温度:
+                        <input type="text" disabled="disabled" v-model="cardata.Tem">
                     </li>
-                    <li>左编码器值:
-                        <input type="text" disabled="disabled" v-model="cardata.encoder_left">
+                    <li>雾浓度:
+                        <input type="text" disabled="disabled" v-model="cardata.Fog">
                     </li>
-                    <li>右编码器值:
-                        <input type="text" disabled="disabled" v-model="cardata.encoder_right">
+                    <li>湿度:
+                        <input type="text" disabled="disabled" v-model="cardata.Water">
                     </li>
-                    <li>A_X:
-                        <input type="text" disabled="disabled" v-model="cardata.A_X">
+                    <li>Co2浓度:
+                        <input type="text" disabled="disabled" v-model="cardata.Co2">
                     </li>
-                    <li>A_Y:
-                        <input type="text" disabled="disabled" v-model="cardata.A_Y">
+                    <li>Co浓度:
+                        <input type="text" disabled="disabled" v-model="cardata.Co">
                     </li>
-                    <li>A_Z:
-                        <input type="text" disabled="disabled" v-model="cardata.A_Z">
+                    <li>N2浓度:
+                        <input type="text" disabled="disabled" v-model="cardata.N2">
                     </li>
-                    <li>G_X:
-                        <input type="text" disabled="disabled" v-model="cardata.G_X">
+                    <li>No浓度:
+                        <input type="text" disabled="disabled" v-model="cardata.No">
                     </li>
-                    <li>G_Y:
-                        <input type="text" disabled="disabled" v-model="cardata.G_Y">
-                    </li>
-                    <li>G_Z:
-                        <input type="text" disabled="disabled" v-model="cardata.G_Z">
-                    </li>
-                    <li>M_X:
-                        <input type="text" disabled="disabled" v-model="cardata.M_X">
-                    </li>
-                    <li>M_Y:
-                        <input type="text" disabled="disabled" v-model="cardata.M_Y">
-                    </li>
-                    <li>M_Z:
-                        <input type="text" disabled="disabled" v-model="cardata.M_Z">
-                    </li>
-                    <li>左电感值:
-                        <input type="text" disabled="disabled" v-model="cardata.inductance_left">
-                    </li>
-                    <li>中电感值:
-                        <input type="text" disabled="disabled" v-model="cardata.inductance_right">
-                    </li>
-                    <li>右电感值:
-                        <input type="text" disabled="disabled" v-model="cardata.inductance_mid">
-                    </li>
-                    <li>偏离中心值:
-                        <input type="text" disabled="disabled" v-model="cardata.fe">
-                    </li>
-                    <li>左电机控制值:
-                        <input type="text" disabled="disabled" v-model="cardata.motor_left">
-                    </li>
-                    <li>右电机控制值:
-                        <input type="text" disabled="disabled" v-model="cardata.motor_right">
-                    </li>
-                    <li>舵机控制值:
-                        <input type="text" disabled="disabled" v-model="cardata.steer">
+                    <li>N2o浓度:
+                        <input type="text" disabled="disabled" v-model="cardata.N2o">
                     </li>
                 </ul>
                 <!-- <div class="get">
                     <input type="button" value="获取数据" @click="start">
                     <input type="button" value="停止显示" @click="stop">
                 </div> -->
-            </div>
-        </div>
-        <div class="control">
-            <div class="line">
-                <h4>小车控制台</h4>
-            </div>
-            <div class=" button">
-                <ul>
-                    <li>
-                        <input type="button" value="启动" @click="start">
-                    </li>
-                    <li>
-                        <input type="button" value="停止" @click="stop">
-                    </li>
-                </ul>
-            </div>
-        </div>
-
-
-        <div class="changedata">
-            <div class="line">
-                <h4>调试PID值</h4>
-            </div>
-
-            <div class="change">
-                <ul>
-                    <li>P值:
-                        <input type="text" v-model="PID.P">
-                    </li>
-                    <li>I值:
-                        <input type="text" v-model="PID.I">
-                    </li>
-                    <li>D值:
-                        <input type=" text" v-model="PID.D">
-                    </li>
-                </ul>
-            </div>
-            <div class=" button">
-                <ul>
-                    <li>
-                        <input type="button" value="调试" @click="change">
-                    </li>
-                    <li>
-                        <input type="button" value="清屏" @click="clear">
-                    </li>
-                </ul>
-            </div>
-        </div>
-        <div class="Scatterplot">
-            <div class="line">
-                <h4>实时轨迹</h4>
-                <div class="plot"></div>
-            </div>
-        </div>
-
-        <div class="Scatterplot1">
-            <div class="line">
-                <h4>数据相关性分析</h4>
-                <div class="plot1"></div>
-                <div class="plot2"></div>
             </div>
         </div>
     </div>
@@ -358,6 +265,14 @@
                     motor_left: '',
                     motor_right: '',
                     steer: '',
+                    Water:'',
+                    Tem:'',
+                    Fog:'',
+                    Co2:'',
+                    Co:'',
+                    N2:'',
+                    No:'',
+                    N2o:'',
                 }],
 
                 PID: [{
@@ -392,7 +307,7 @@
 
                 getdata: function () {
                     var that = this;
-                    axios.get("http://159.75.2.47:8889/data").then
+                    axios.get("http://159.75.2.47:9527/data").then
                         (function (response) {
                             that.cardata = response.data;
 
@@ -459,6 +374,14 @@
                         motor_left: '',
                         motor_right: '',
                         steer: '',
+                        Water:'',
+                        Tem:'',
+                        Fog:'',
+                        Co2:'',
+                        Co:'',
+                        N2:'',
+                        No:'',
+                        N2o:'',
                     }];
 
                     this.plotdata = [];
@@ -536,19 +459,6 @@
                             // alert('小车轨迹数据获取失败');
                         })
                 },
-
-                // draw: function () {
-                //     var that = this;
-
-                //     that.plotdata[that.plotnum] = that.testdata[that.plotnum];
-
-                //     that.myEcharts();
-                //     that.plotnum++;
-                //     //console.log(that.drawplot);
-                //     // console.log(that.testdata[that.plotnum]);
-                //     // console.log(that.plotnum)
-
-                // },
 
 
                 myEcharts1: function () {
@@ -665,16 +575,7 @@
             },
 
             mounted() {
-                time = setInterval(this.getdata, 500);
-                plottime = setInterval(this.drawplot, 500);
-                // plottime = setInterval(this.drawplot, 1);
-                // plottime1 = setInterval(this.drawplot1, 500);
-                // plottime2 = setInterval(this.drawplot2, 500);
-                //  this.drawplot();
-                // this.drawplot1();
-                // this.drawplot2();
-                plottime1 = setInterval(this.drawplot1, 500);
-                plottime2 = setInterval(this.drawplot2, 500);
+                time = setInterval(this.getdata, 1000);
             },
             beforeDestroy() {
                 clearInterval(this.timer);
