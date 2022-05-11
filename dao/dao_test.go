@@ -6,6 +6,7 @@ import(
 	"fmt"
 	"gorm.io/gorm"
 	"errors"
+	"context"
 )
 
 func TestModelFind(t *testing.T){
@@ -13,6 +14,7 @@ func TestModelFind(t *testing.T){
 	if err != nil{
 		t.Errorf("failed:%#v",err)
 	} 
+	RedisInit()
 	db,err := models.UserFindData("xiaoming")
 	models.UserCreateData("lll","123")
 	if db.UserName == ""{
@@ -51,4 +53,14 @@ func TestModelHumFind(t *testing.T){
 	}else{
 		fmt.Println("get data :",result)
 	}
+}
+
+func TestRedisConnect(t *testing.T){
+	var ctx = context.Background()
+	RedisInit()
+	val,err := models.RDB.Get(ctx, "key").Result()
+	if err != nil{
+		t.Errorf("error:%#v",err)
+	}
+	fmt.Println("val:",val)
 }

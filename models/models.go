@@ -3,15 +3,18 @@ package models
 //操作数据库
 import(
 	"gorm.io/gorm"
+	"github.com/go-redis/redis/v8"
 	"log"
 	"errors"
+	"context"
 )
 
 var DB *gorm.DB
+var RDB *redis.Client
 
 type UserTable struct{
 	gorm.Model
-	UserName string
+	UserName string	`gorm:"type:varchar(255)"`
 	Password string
 }
 
@@ -40,17 +43,41 @@ func UserCreateData(name,password string) error{
 		UserName:name,
 		Password:password,
 	}
+	//update in redis
+	var ctx = context.Background()
+	rdbErr := RDB.Set(ctx, name, password, 0)
+	if err != nil{
+		log.Println("redis update failed:", rdbErr.Err())
+		return rdbErr.Err()
+	}
 	return DB.Create(u).Error
 }
 
 //find
 func UserFindData(name string) (*UserTable,error){
+	//redis + mysql
+	var cxt = context.Background()
 	u := &UserTable{}
-	if err := DB.Where("user_name = ?", name).Find(u).Error; err != nil{
-		log.Println("user find data:find falied:",err)
+	password,err := RDB.Get(cxt, name).Result()
+	if err == redis.Nil{
+		if err := DB.Where("user_name = ?", name).Find(u).Error; err != nil{
+			log.Println("user find data:find falied:",err)
+			return u,err
+		}
+		//update in redis
+		rdbErr := RDB.Set(cxt, u.UserName, u.Password, 0)
+		if rdbErr.Err() != nil{
+			log.Println("redis update failed:", rdbErr.Err())
+			return u,rdbErr.Err()
+		}
+		return u,nil
+	}else if err != nil{
 		return u,err
+	}else{
+		u.UserName = name
+		u.Password = password
+		return u,nil
 	}
-	return u,nil
 }
 
 func HumidifierCreateData(h *HumidifierTable) error{	

@@ -9,6 +9,7 @@ import (
 func RountersInit() *gin.Engine {
 	r := gin.Default()
 	r.LoadHTMLGlob("templates/*")
+	r.Static("/picture","./picture")
 	// r.GET("/pid", HandlePid)	//
 	r.GET("/data", controller.HandleData) //get all data
 
@@ -26,10 +27,9 @@ func RountersInit() *gin.Engine {
 		//注册检测
 		group.GET("/registerfail", controller.HandleRegisterFail)
 		//展示页面
-		group.GET("/home", controller.HandleHome) //show data page
+		group.GET("/home", controller.JwtMiddleWare, controller.HandleHome) //show data page
 		group.POST("/LoginCGISQL.cgi", controller.HandleLoginCGI)
 		group.POST("/RegisterCGISQL.cgi", controller.HandleRegisterCGI)
 	}
-
 	return r
 }
