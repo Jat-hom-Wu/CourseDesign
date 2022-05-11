@@ -31,6 +31,5 @@ func RountersInit() *gin.Engine {
 		group.POST("/LoginCGISQL.cgi", controller.HandleLoginCGI)
 		group.POST("/RegisterCGISQL.cgi", controller.HandleRegisterCGI)
 	}
-
 	return r
 }

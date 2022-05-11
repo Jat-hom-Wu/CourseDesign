@@ -10,6 +10,7 @@ import(
 	"github.com/dgrijalva/jwt-go"
 )
 
+
 //show data page
 func HandleHome(c *gin.Context){
 	c.HTML(http.StatusOK,"home.html",nil)
@@ -70,7 +71,7 @@ func HandleLoginCGI(c *gin.Context){
 				log.Println("generate token falied:",err)
 			}
 			c.SetCookie("token", token, 600, "/", "159.75.2.47", false, false)
-			c.Redirect(http.StatusFound, "/course/home")
+			c.Redirect(http.StatusMovedPermanently, "http://159.75.2.47:9527/course/home")//这里做重定向慢了，应该后端返回json，让前端来完成渲染html的。
 		}else{
 			c.HTML(http.StatusOK, "logError.html", nil)
 		}
