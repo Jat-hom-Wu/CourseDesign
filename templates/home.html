@@ -240,10 +240,11 @@
 
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-    <script src="https://cdn.bootcss.com/echarts/4.2.1-rc1/echarts.min.js"></script>
+    <!-- <script src="https://cdn.bootcss.com/echarts/4.2.1-rc1/echarts.min.js"></script> -->   <!-- 这个链接连接不上，网页会卡住 -->
+    
     <script>
         var app = new Vue({
-            el: "#top",
+            el: "#top",//挂载
             data: {
                 cardata: [{
                     number: '',
@@ -303,18 +304,34 @@
                 plotdata2: []
             },
 
+            resp:{
+                
+            }
+
             methods: {
 
-                getdata: function () {
-                    var that = this;
-                    axios.get("http://159.75.2.47:9527/data").then
+                getdata: function () {  //vue中methods的语法
+                    var that = this;    //这个this指向vue，绑定到that上
+                    axios.get("http://159.75.2.47:9527/data").then  //axios是一个网络请求库
                         (function (response) {
-                            that.cardata = response.data;
+                            that.cardata = response.data;           //数据绑定
 
                         }, function (err) {
                             // alert('小车数据获取失败');
                         })
                 },
+
+                reflesh: function(){
+                    var that = this
+                    console.log("test")
+                    axios.get("http://159.75.2.47:9527/course/home").then
+                        (function(response){
+                            var code = response.data.code
+                            console.log("code: %d",code)
+                        }), function(err){
+
+                        }
+                }
 
                 start: function () {
 
@@ -575,7 +592,8 @@
             },
 
             mounted() {
-                time = setInterval(this.getdata, 1000);
+                time = setInterval(this.getdata, 5000);
+                time = setInterval(this.reflesh, 2000);
             },
             beforeDestroy() {
                 clearInterval(this.timer);
