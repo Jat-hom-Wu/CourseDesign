@@ -10,6 +10,18 @@ import(
 	"github.com/dgrijalva/jwt-go"
 )
 
+type Response struct {
+	Code int         `json:"code"`
+	Msg  string      `json:"msg"`
+	Data interface{} `json:"data"`
+}
+//Code: 1 2 3 4 5(toekn failed) 6(token success) 7(get cookie failed)
+
+type Request struct{
+	User string `json:user`
+	Password string `json:password`
+}
+
 
 //show data page
 func HandleHome(c *gin.Context){
@@ -33,7 +45,7 @@ func HandleLogin(c *gin.Context){
 }
 //login fail
 func HandleLoginFail(c *gin.Context){
-	c.HTML(http.StatusOK, "logError.html",nil)
+	c.JSON(200,"login page")
 }
 //register
 func HandleRegister(c *gin.Context){
@@ -45,22 +57,32 @@ func HandleRegisterFail(c *gin.Context){
 }
 
 func HandleLoginCGI(c *gin.Context){
-	user := c.PostForm("user")
-	password := c.PostForm("password")
-	result,err := models.UserFindData(user)
+	req := Request{}
+	errBind := c.BindJSON(&req)
+	if errBind != nil{
+		log.Println("server login bind json failed:",errBind)
+		c.JSON(200,Response{
+			Code:3,
+			Msg:"paramter error",
+			Data:"",
+		})
+		return
+	}
+	result,err := models.UserFindData(req.User)
+	log.Println("user:",req.User,"; password:",req.Password)
 	if err != nil{
 		c.JSON(505,"server error")
 		return
 	}else{
-		if user == result.UserName && password == result.Password{
+		if req.User != "" && req.User == result.UserName && req.Password == result.Password{
 			//token
 			nowTime := time.Now()
-			expireTime := nowTime.Add(600 * time.Second)	//token的过期时间，header中以设置过期时间，因此此处没意义
+			expireTime := nowTime.Add(600 * time.Second)	//token的过期时间，需要区别于set_cookie中的过期时间
 			issuer := "frank"
 			cla := jwt_service.Claims{
 				//token中最好不要放敏感信息
-				Password: password,
-				Username: user,
+				Password: req.Password,
+				Username: req.User,
 				StandardClaims: jwt.StandardClaims{
 					ExpiresAt: expireTime.Unix(),
 					Issuer:    issuer,
@@ -71,27 +93,53 @@ func HandleLoginCGI(c *gin.Context){
 				log.Println("generate token falied:",err)
 			}
 			c.SetCookie("token", token, 600, "/", "159.75.2.47", false, false)
-			c.Redirect(http.StatusMovedPermanently, "http://159.75.2.47:9527/course/home")//这里做重定向慢了，应该后端返回json，让前端来完成渲染html的。
+			c.JSON(200, Response{
+				Code:1,
+				Msg:"",
+				Data:"",
+			})
+			//这里做重定向的话就慢了，应该后端返回json，让前端来完成渲染html的。
 		}else{
-			c.HTML(http.StatusOK, "logError.html", nil)
+			c.JSON(200,Response{
+				Code:2,
+				Msg:"user or password error",
+				Data:"",
+			})
 		}
 	}
 	
 }
 
 func HandleRegisterCGI(c *gin.Context){
-	user := c.PostForm("user")
-	password := c.PostForm("password")
-	result,err := models.UserFindData(user)
+	req := Request{}
+	errBind := c.BindJSON(&req)
+	if errBind != nil{
+		log.Println("server register bind json failed:",errBind)
+		c.JSON(200,Response{
+			Code:3,
+			Msg:"server bind json error",
+			Data:"",
+		})
+		return
+	}
+	result,err := models.UserFindData(req.User)
 	if err != nil{
 		c.JSON(505,"server error")
 		return
 	}else{
 		if result.UserName == ""{
-			models.UserCreateData(user,password)
-			c.HTML(http.StatusOK, "log.html", nil)
+			models.UserCreateData(req.User,req.Password)
+			c.JSON(200, Response{
+				Code:3,
+				Msg:"",
+				Data:"",
+			})
 		}else{
-			c.HTML(http.StatusOK, "registerError.html", nil)
+			c.JSON(200, Response{
+				Code:4,
+				Msg:"user name exist",
+				Data:"",
+			})
 		}
 	}
 }
@@ -99,16 +147,28 @@ func HandleRegisterCGI(c *gin.Context){
 func JwtMiddleWare(c *gin.Context){
 	token,err := c.Cookie("token")
 	if err != nil{
-		log.Println("not receive token")
-		c.Redirect(http.StatusFound, "/course/login")
+		log.Println("get cookie failed:",err)
+		c.JSON(200,Response{
+			Code:7,
+		})
 		c.Abort()
 		return
 	}else{
-		_,err = jwt_service.ParseToken(token)
+		_,err := jwt_service.ParseToken(token)
 		if err != nil{
 			log.Println("token parse failed")
-			c.Redirect(http.StatusFound, "/course/login")
+			c.JSON(200,Response{
+				Code:5,
+			})
 			c.Abort()
+			return
+		}else{
+			//Todo:重新颁发新token,用双token
+			log.Println("token parse success")
+			c.JSON(200,Response{
+				Code:6,
+			})
+			return
 		}
 	}
 }
