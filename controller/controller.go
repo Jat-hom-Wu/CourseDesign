@@ -57,6 +57,7 @@ func HandleRegisterFail(c *gin.Context){
 }
 
 func HandleLoginCGI(c *gin.Context){
+	//这里做重定向的话就慢了，应该后端返回json，让前端来完成渲染html的。
 	req := Request{}
 	errBind := c.BindJSON(&req)
 	if errBind != nil{
@@ -77,7 +78,7 @@ func HandleLoginCGI(c *gin.Context){
 		if req.User != "" && req.User == result.UserName && req.Password == result.Password{
 			//token
 			nowTime := time.Now()
-			expireTime := nowTime.Add(600 * time.Second)	//token的过期时间，需要区别于set_cookie中的过期时间
+			expireTime := nowTime.Add(5 * time.Second)	//token的过期时间，需要区别于set_cookie中的过期时间
 			issuer := "frank"
 			cla := jwt_service.Claims{
 				//token中最好不要放敏感信息
@@ -93,12 +94,19 @@ func HandleLoginCGI(c *gin.Context){
 				log.Println("generate token falied:",err)
 			}
 			c.SetCookie("token", token, 600, "/", "159.75.2.47", false, false)
+			//refreshtoken generate
+			refreshTokenExpireTime := nowTime.Add(30 * time.Second)	
+			cla.StandardClaims.ExpiresAt = refreshTokenExpireTime.Unix()
+			refreshToken,err := jwt_service.GenerateToken(cla)
+			if err != nil{
+				log.Println("generate token falied:",err)
+			}
+			c.SetCookie("refreshToken", refreshToken, 600, "/", "159.75.2.47", false, false)
 			c.JSON(200, Response{
 				Code:1,
 				Msg:"",
 				Data:"",
 			})
-			//这里做重定向的话就慢了，应该后端返回json，让前端来完成渲染html的。
 		}else{
 			c.JSON(200,Response{
 				Code:2,
@@ -144,10 +152,12 @@ func HandleRegisterCGI(c *gin.Context){
 	}
 }
 
+//Todo:重新颁发新token,用双token
 func JwtMiddleWare(c *gin.Context){
 	token,err := c.Cookie("token")
-	if err != nil{
-		log.Println("get cookie failed:",err)
+	refreshToken,refreshTokenErr := c.Cookie("refreshToken")
+	if err != nil || refreshTokenErr != nil{
+		log.Println("get cookie failed:",err,"; ",refreshTokenErr)
 		c.JSON(200,Response{
 			Code:7,
 		})
@@ -157,18 +167,54 @@ func JwtMiddleWare(c *gin.Context){
 		_,err := jwt_service.ParseToken(token)
 		if err != nil{
 			log.Println("token parse failed")
-			c.JSON(200,Response{
-				Code:5,
-			})
-			c.Abort()
-			return
+			claims,err := jwt_service.ParseToken(refreshToken)
+			if err != nil{
+				log.Println("refresh token failed too")
+				c.JSON(200,Response{
+					Code:5,
+				})
+				c.Abort()
+				return
+			}else{
+				claToken := newClaims(5, claims.Username, claims.Password)
+				claRefreshToken := newClaims(30, claims.Username, claims.Password)
+				token,err := jwt_service.GenerateToken(claToken)
+				if err != nil{
+					log.Println("generate token falied:",err)
+				}
+				refreshToken,err := jwt_service.GenerateToken(claRefreshToken)
+				if err != nil{
+					log.Println("generate token falied:",err)
+				}
+				c.SetCookie("token", token, 600, "/", "159.75.2.47", false, false)
+				c.SetCookie("refreshToken", refreshToken, 600, "/", "159.75.2.47", false, false)
+				log.Println("refresh token parse success")
+				c.JSON(200,Response{
+					Code:6,
+				})
+			}
 		}else{
-			//Todo:重新颁发新token,用双token
 			log.Println("token parse success")
 			c.JSON(200,Response{
 				Code:6,
 			})
-			return
 		}
 	}
+}
+
+func newClaims(t int, user,password string) jwt_service.Claims{
+	nowTime := time.Now()
+	//time.Duration类型 不能直接和 int类型相乘，需要先将变量转换为time.Duration
+	expireTime := nowTime.Add(time.Duration(t) * time.Second)	//token的过期时间，需要区别于set_cookie中的过期时间
+	issuer := "frank"
+	cla := jwt_service.Claims{
+		//token中最好不要放敏感信息
+		Password: password,
+		Username: user,
+		StandardClaims: jwt.StandardClaims{
+		ExpiresAt: expireTime.Unix(),
+		Issuer:    issuer,
+		},
+	}
+	return cla
 }
